@@ -1,24 +1,19 @@
 window.addEventListener('DOMContentLoaded', () => {
   const modelViewer = document.getElementById('viewer');
 
-  if (!modelViewer) {
-    console.error('model-viewer öğesi bulunamadı!');
-    return;
-  }
-
-  // AR başlarsa: kamera kontrolünü devre dışı bırak
-  modelViewer.addEventListener('sessionstart', () => {
-    modelViewer.disableCameraControls = true;
-    console.log("AR başladı: kontrol kapalı");
+  // AR başlatıldığında döndürmeyi kapat
+  modelViewer.addEventListener('ar-status', (event) => {
+    const status = event.detail.status;
+    if (status === 'session-started') {
+      modelViewer.disableCameraControls = true;
+      console.log("AR başladı → döndürme kapalı");
+    } else if (status === 'session-ended') {
+      modelViewer.disableCameraControls = false;
+      console.log("AR bitti → döndürme açık");
+    }
   });
 
-  // AR biterse: tekrar aç
-  modelViewer.addEventListener('sessionend', () => {
-    modelViewer.disableCameraControls = false;
-    console.log("AR bitti: kontrol açık");
-  });
-
-  // Yükleme çubuğu
+  // İsteğe bağlı: progress bar işlevi
   const onProgress = (event) => {
     const progressBar = event.target.querySelector('.progress-bar');
     const updatingBar = event.target.querySelector('.update-bar');
