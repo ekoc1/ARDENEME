@@ -1,4 +1,6 @@
-// Handles loading the events for <model-viewer>'s slotted progress bar
+const modelViewer = document.querySelector('model-viewer');
+
+// Loading bar kodu
 const onProgress = (event) => {
   const progressBar = event.target.querySelector('.progress-bar');
   const updatingBar = event.target.querySelector('.update-bar');
@@ -11,14 +13,18 @@ const onProgress = (event) => {
   }
 };
 
-const modelViewer = document.querySelector('model-viewer');
 modelViewer.addEventListener('progress', onProgress);
 
-// Kamera rotasyonunu sabitle ve döndürmeyi engelle
-function lockRotation() {
-  // Sabit kamera açısını belirle (örnek: 0 derece azimut, 75 derece yükseklik, 105% uzaklık)
-  modelViewer.cameraOrbit = '0deg 75deg 105%'; 
-  requestAnimationFrame(lockRotation);
-}
-
-lockRotation();
+// AR modundayken döndürmeyi engelle
+modelViewer.addEventListener('ar-status', (event) => {
+  const status = event.detail.status;
+  
+  if (status === 'session-started') {
+    // AR başladıysa: rotasyonu sıfırla ve dondur
+    modelViewer.cameraOrbit = '0deg 75deg auto';
+    modelViewer.disableCameraControls = true;
+  } else if (status === 'session-ended') {
+    // AR bittiğinde kontrolleri geri aç
+    modelViewer.disableCameraControls = false;
+  }
+});
