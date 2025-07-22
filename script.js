@@ -1,6 +1,18 @@
-const modelViewer = document.querySelector('model-viewer');
+const modelViewer = document.getElementById('viewer');
 
-// Loading bar kodu
+// AR başlarsa: kamera kontrolünü devre dışı bırak
+modelViewer.addEventListener('sessionstart', () => {
+  modelViewer.disableCameraControls = true;
+  console.log("AR başladı: kontrol kapalı");
+});
+
+// AR biterse: tekrar aç
+modelViewer.addEventListener('sessionend', () => {
+  modelViewer.disableCameraControls = false;
+  console.log("AR bitti: kontrol açık");
+});
+
+// İsteğe bağlı: yükleme çubuğu
 const onProgress = (event) => {
   const progressBar = event.target.querySelector('.progress-bar');
   const updatingBar = event.target.querySelector('.update-bar');
@@ -14,17 +26,3 @@ const onProgress = (event) => {
 };
 
 modelViewer.addEventListener('progress', onProgress);
-
-// AR modundayken döndürmeyi engelle
-modelViewer.addEventListener('ar-status', (event) => {
-  const status = event.detail.status;
-  
-  if (status === 'session-started') {
-    // AR başladıysa: rotasyonu sıfırla ve dondur
-    modelViewer.cameraOrbit = '0deg 75deg auto';
-    modelViewer.disableCameraControls = true;
-  } else if (status === 'session-ended') {
-    // AR bittiğinde kontrolleri geri aç
-    modelViewer.disableCameraControls = false;
-  }
-});
