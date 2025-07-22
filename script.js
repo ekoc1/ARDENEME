@@ -10,4 +10,15 @@ const onProgress = (event) => {
     progressBar.classList.remove('hide');
   }
 };
-document.querySelector('model-viewer').addEventListener('progress', onProgress);
+
+const modelViewer = document.querySelector('model-viewer');
+modelViewer.addEventListener('progress', onProgress);
+
+// Kamera rotasyonunu sabitle ve döndürmeyi engelle
+function lockRotation() {
+  // Sabit kamera açısını belirle (örnek: 0 derece azimut, 75 derece yükseklik, 105% uzaklık)
+  modelViewer.cameraOrbit = '0deg 75deg 105%'; 
+  requestAnimationFrame(lockRotation);
+}
+
+lockRotation();
